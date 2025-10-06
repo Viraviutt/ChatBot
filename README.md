@@ -1,6 +1,15 @@
 # ChatBot
 
-Este repositorio contiene un proyecto de chatbot basado en Gradio y Python. El chatbot utiliza modelos de lenguaje para generar respuestas a las consultas del usuario. Este proyecto está diseñado para ser fácil de configurar y ejecutar.
+Este repositorio contiene un proyecto de chatbot basado en Gradio y Python. El chatbot utiliza múltiples modelos de lenguaje y proveedores para generar respuestas a las consultas del usuario, incluyendo traducción, resúmenes y generación de imágenes.
+
+## Características
+
+- **Múltiples proveedores**: OpenAI, Hugging Face, Local (Stable Diffusion), Ollama
+- **Múltiples tareas**: Traducción, resúmenes, generación de imágenes
+- **Procesamiento local**: Soporte para modelos locales con Ollama y Stable Diffusion
+- **Interfaz intuitiva**: Interfaz web con Gradio
+- **Métricas de uso**: Sistema de seguimiento de rendimiento
+- **Soporte multimodal**: Carga de archivos PDF, DOCX y TXT
 
 ## Requisitos Previos
 
@@ -42,13 +51,21 @@ Sigue estos pasos para configurar el entorno y ejecutar el proyecto:
    pip install -r requirements.txt
    ```
 
-   Si no tienes un archivo `requirements.txt`, asegúrate de incluir las siguientes dependencias:
-   - `gradio`
-   - Cualquier otra biblioteca utilizada en el proyecto.
+   Las dependencias principales incluyen:
+   - `gradio` - Interfaz web
+   - `openai` - API de OpenAI y compatibles
+   - `transformers` - Modelos de Hugging Face
+   - `torch` - PyTorch para modelos locales
+   - `requests` - Comunicación con Ollama
+   - `PyMuPDF`, `docx2txt` - Procesamiento de documentos
 
-   Para generar un archivo `requirements.txt`, puedes usar:
-   ```bash
-   pip freeze > requirements.txt
+4. **Configura las API Keys** (opcional):
+   Crea un archivo `.env` en la raíz del proyecto con tus claves de API:
+   ```
+   OPEN_ROUTER_API_KEY=tu_clave_aqui
+   GEMINI_API_KEY=tu_clave_aqui
+   GROQ_API_KEY=tu_clave_aqui
+   HF_TOKEN=tu_token_aqui
    ```
 
 4. **Verifica la instalación**:
@@ -56,6 +73,43 @@ Sigue estos pasos para configurar el entorno y ejecutar el proyecto:
    ```bash
    pip list
    ```
+
+## Configuración de Ollama (Opcional)
+
+Ollama permite ejecutar modelos de lenguaje grandes localmente para mayor privacidad y sin límites de API.
+
+### Instalación de Ollama
+
+1. **Instalar Ollama**:
+   - **Windows**: Descarga desde https://ollama.ai
+   - **Linux/Mac**: 
+     ```bash
+     curl -fsSL https://ollama.ai/install.sh | sh
+     ```
+
+2. **Descargar modelos recomendados**:
+   ```bash
+   ollama pull llama3.1:8b   
+   ollama pull mistral:7b    
+   ```
+
+3. **Modelos adicionales opcionales**:
+   ```bash
+   ollama pull qwen2:7b       
+   ollama pull codellama:7b   
+   ollama pull phi3:mini      
+   ```
+
+4. **Iniciar Ollama**:
+   ```bash
+   ollama serve
+   ```
+
+5. **Verificar instalación**:
+   ```bash
+   ollama list
+   ```
+
 
 ## Ejecución
 
@@ -73,16 +127,65 @@ Sigue estos pasos para configurar el entorno y ejecutar el proyecto:
 
 ## Estructura del Proyecto
 
-- `ChatBot.ipynb`: Notebook principal que contiene la lógica del chatbot.
-- `chat_funct.py`: Archivo Python con funciones auxiliares.
-- `gradio_local.py`: Archivo local que no debe interferir con la biblioteca oficial de Gradio.
-- `README.md`: Este archivo.
-- `__pycache__/`: Carpeta generada automáticamente para almacenar archivos compilados.
+- `ChatBot.ipynb`: Notebook principal que contiene la lógica del chatbot
+- `requirements.txt`: Lista de dependencias del proyecto
+- `README.md`: Este archivo de documentación
+- `images/`: Carpeta donde se guardan las imágenes generadas
+- `.env`: Archivo de configuración de API keys (crear manualmente)
+
+## Proveedores y Modelos Disponibles
+
+### OpenAI-Compatible
+- **Gemini** (Google): Traducción y conversación general
+- **Groq**: Procesamiento rápido para resúmenes
+- **OpenRouter**: Acceso a múltiples modelos
+
+### Hugging Face
+- **Helsinki-NLP**: Traducción inglés → español
+- **Stability AI**: Generación de imágenes con SDXL
+
+### Local
+- **RunwayML**: Stable Diffusion local para imágenes
+- **Ollama**: Modelos de lenguaje ejecutados localmente
+
+### Tareas Disponibles
+1. **Traducción**: Traducir texto entre idiomas
+2. **Resúmenes**: Resumir documentos y texto largo
+3. **Imágenes**: Generar imágenes desde descripciones de texto
 
 ## Notas
 
-- Si encuentras errores relacionados con la biblioteca `gradio`, asegúrate de que no haya un archivo local llamado `gradio.py` que pueda estar interfiriendo con la biblioteca oficial.
-- Reinicia el kernel de Jupyter Notebook después de realizar cambios en el código para evitar conflictos.
+- **API Keys**: Las claves de API son opcionales. Sin ellas, solo funcionarán los modelos locales (Ollama, RunwayML)
+- **Ollama**: Debe estar ejecutándose como servicio (`ollama serve`) para funcionar
+- **GPU**: Se recomienda GPU para mejor rendimiento con modelos locales
+- **Archivos**: Soporta carga de PDF, DOCX y TXT para procesamiento
+- **Métricas**: El sistema incluye métricas de uso y rendimiento en tiempo real
+
+## Solución de Problemas
+
+### Problemas comunes:
+
+1. **Ollama no se conecta**:
+   ```bash
+   # Verificar que Ollama esté corriendo
+   ollama serve
+   # En otra terminal
+   ollama list
+   ```
+
+2. **Error de GPU con PyTorch**:
+   ```bash
+   # Reinstalar PyTorch con soporte CUDA
+   pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
+   ```
+
+3. **Errores de API**:
+   - Verificar que las API keys estén configuradas correctamente
+   - Comprobar límites de uso de las APIs
+
+4. **Problemas de memoria**:
+   - Usar modelos más pequeños (phi3:mini para Ollama)
+   - Cerrar otras aplicaciones que consuman GPU/RAM
 
 ## Contribuciones
 
